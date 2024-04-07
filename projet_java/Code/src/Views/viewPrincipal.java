@@ -771,8 +771,8 @@ public class viewPrincipal extends ScrollPane {
             throw new VerifTypePost("Veuillez choisir un type de post");
         }
         
-        if (un_utilisateur_admin.getId_user() != proprietaire_mur.getId_user()){
-            if (proprietaire_mur!=null)
+        if (proprietaire_mur == null || un_utilisateur_admin.getId_user() != proprietaire_mur.getId_user()){ // test si l'utilisateur est sur son propre mur ou non
+            if (proprietaire_mur!=null) // test si l'utilisateur est sur le mur de quelqu'un d'autre
                 throw new VerifIdentiteUser("Vous ne pouvez pas poster sur le mur d'un autre utilisateur");
         }
     }
