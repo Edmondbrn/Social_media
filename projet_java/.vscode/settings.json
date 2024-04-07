@@ -1,0 +1,20 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "test/lib/javafx.base.jar",
+        "test/lib/javafx.controls.jar",
+        "test/lib/javafx.fxml.jar",
+        "test/lib/javafx.graphics.jar",
+        "test/lib/javafx.media.jar",
+        "test/lib/javafx.swing.jar",
+        "test/lib/javafx.web.jar",
+        "test/lib/javafx-swt.jar",
+        "test/lib/jna-jpms-5.12.1.jar",
+        "test/lib/jna-platform-jpms-5.12.1.jar",
+        "test/lib/slf4j-api-1.7.36.jar",
+        "test/lib/sqlite-jdbc-3.45.2.0.jar",
+        "test/lib/vlcj-4.8.2.jar",
+        "test/lib/vlcj-javafx-1.2.0.jar",
+        "test/lib/vlcj-natives-4.8.1.jar"
+    ]
+}
