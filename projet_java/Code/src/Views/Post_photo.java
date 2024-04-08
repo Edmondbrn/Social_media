@@ -64,8 +64,8 @@ public class Post_photo extends Post_texte{ // classe qui hérite de Post_texte 
             File file = new File(URL_image);
             image = new ImageView(new Image(file.toURI().toString())); // récupère le chemin absolu pour toutes les machines différentes
         }
-        image.setFitWidth(600); // Règle les dimensions de l'image
-        image.setFitHeight(400);
+        image.setFitWidth(1200); // Règle les dimensions de l'image
+        image.setFitHeight(720);
         image.setPreserveRatio(true); // Garde les proportions de l'image
         gestionTitreImage(texte_du_post, vbox_post); // Gère le titre de l'image
         return image;

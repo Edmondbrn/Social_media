@@ -21,8 +21,14 @@ Pour le lancer sur MacOS (zsh):
 zsh boot_mac
 ```
 
-Si votre MacOs ne prend pas en charge zsh, veuillez utiliser la commande bash
-ce script bash execute le .jar du projet qui ne doit pas être déplacé de son emplacement d'origine.
+Si votre MacOs ne prend pas en charge zsh, veuillez utiliser la commande bash. Si vous rencontrez des erreurs de lancement liées à OpenGL2 ou autres, veuillez télécharger une autre version de javafx pour MacOs selon correspondante à votre système (x64, x86...). Il faudra simplement respecter le même répertoire que celui d'origine.
+Ce script bash execute le .jar du projet qui ne doit pas être déplacé de son emplacement d'origine.
+
+## Bug reports
+
+- La barre de recherche peut entrainer un "softlock" de l'application si vous essayé d'accéder à un mur sur lequel vous êtes bloqué. La fenêtre d'erreur apparaitra autant de fois que vous avez entré de lettres pour trouver le mur en question.
+
+- Lorsque vous postez des images ou des vidéos, veuillez à bien changer le titre des cer dernières pour éviter un bug de duplication.
 
 ## Authors
 Edmond BERNE

@@ -46,9 +46,11 @@ public class Tableau_bloque extends Application {
    // Créer une nouvelle scène
    Scene scene = new Scene(vbox, 200, 200);
    Requete moteur_de_Requete = new Requete();
+   int id_mur;
 
-   public Tableau_bloque(ArrayList<String> liste_personne) {
+   public Tableau_bloque(ArrayList<String> liste_personne, int id_mur_admin) {
        this.liste_personne = liste_personne;
+       this.id_mur = id_mur_admin;
        
    }
 
@@ -109,7 +111,7 @@ public class Tableau_bloque extends Application {
                      data_personne.remove(selectedPersonne);
                      String recup_id_personne = new String("SELECT idU FROM USERS WHERE prenom = '" + selectedPersonne.getNom() + "';");
                      ArrayList<String> id_personne = moteur_de_Requete.parcoursTableSQL(recup_id_personne, "idU");
-                     String requet_maj_statut = new String("UPDATE FOLLOWERS SET blocked = 0 WHERE \"#idU\" = " + id_personne.get(0) + ";");
+                     String requet_maj_statut = new String("UPDATE FOLLOWERS SET blocked = 0 WHERE \"#idU\" = " + id_personne.get(0) + " AND \"#idW\" = " + this.id_mur + ";");
                      moteur_de_Requete.insertion_sql(requet_maj_statut);
                }
            });

@@ -21,31 +21,31 @@ public class Tableau_follower extends Application {
      * Classe qui gère la fenetre de la liste des followers
      */
     // Créer une nouvelle fenêtre
-    Stage nouvelle_fenetre = new Stage();
+    private Stage nouvelle_fenetre = new Stage();
     // Créer une TableView
-    TableView<Personne> tableView = new TableView<>();
+    private TableView<Personne> tableView = new TableView<>();
 
     // Créer une colonne pour le nom de l'ami
-    TableColumn<Personne, String> nomColonne = new TableColumn<>("Amis");
+    private TableColumn<Personne, String> nomColonne = new TableColumn<>("Amis");
 
     // Créer une colonne pour le nom de l'utilisateur bloqué
-    ArrayList<String> liste_followers = new ArrayList<>();
+    private ArrayList<String> liste_followers = new ArrayList<>();
 
-    ObservableList<Personne> data_personne = FXCollections.observableArrayList(); // liste des personnes à afficher et actualisable
+    private ObservableList<Personne> data_personne = FXCollections.observableArrayList(); // liste des personnes à afficher et actualisable
     
-    Button fermerBouton = new Button("Fermer");
+    private Button fermerBouton = new Button("Fermer");
 
-    // Supposons que currentUser est l'utilisateur actuellement sélectionné
-    ArrayList<String> liste_personne = new ArrayList<>();
     // Créer une VBox pour contenir la TableView et le bouton
-    VBox vbox = new VBox(tableView, fermerBouton);
+    private VBox vbox = new VBox(tableView, fermerBouton);
 
     // Créer une nouvelle scène
-    Scene scene = new Scene(vbox, 200, 200);
+    private Scene scene = new Scene(vbox, 200, 200);
+    private int id_mur_admin;
 
-    Requete moteur_de_Requete = new Requete();
-    public Tableau_follower(ArrayList<String> liste_personne) {
-        liste_followers = liste_personne;     
+    private Requete moteur_de_Requete = new Requete();
+    public Tableau_follower(ArrayList<String> liste_personne, int id_mur) {
+        liste_followers = liste_personne;   
+        id_mur_admin = id_mur;  
     } 
 
     public void start(Stage primaryStage) { // méthode pour lancer une appli/fenetre
@@ -95,7 +95,7 @@ public class Tableau_follower extends Application {
          * Méthode qui crée et ajoute un élément de menu lors du clique droit sur un nom d'utilisateur et qui permet de bloquer l'utilisateru sélectionné
          * 
          */
-        // Définition des éléments du meni contextuel
+        // Définition des éléments du menu contextuel (clique droit sur un nom)
         ContextMenu contextMenu = new ContextMenu();
         MenuItem bloquerItem = new MenuItem("Bloquer cet utilisateur ?");
 
@@ -103,10 +103,12 @@ public class Tableau_follower extends Application {
             bloquerItem.setOnAction(e -> {
                 Personne selectedPersonne = tableView.getSelectionModel().getSelectedItem();
                 if (selectedPersonne != null) {
-                    data_personne.remove(selectedPersonne);
-                    String recup_id_personne = new String("SELECT idU FROM USERS WHERE prenom = '" + selectedPersonne.getNom() + "';");
-                    ArrayList<String> id_personne = moteur_de_Requete.parcoursTableSQL(recup_id_personne, "idU");
-                    String requet_maj_statut = new String("UPDATE FOLLOWERS SET blocked = 1 WHERE \"#idU\" = " + id_personne.get(0) + ";");
+                    data_personne.remove(selectedPersonne); // enelève de la liste la personne bloquée
+                    // Récupère l'ID de la personne bloquée en supposant que son prénom est unique sur la base, on pourrait ajouter le nom pour être plus sûr
+                    String recup_id_personne_mur = new String("SELECT idU FROM USERS INNER JOIN WALLS ON idU = \"#idU\" WHERE prenom = '" + selectedPersonne.getNom() + "';");
+                    ArrayList<String> id_personne = moteur_de_Requete.parcoursTableSQL(recup_id_personne_mur, "idU");
+                    // Mise à jour de la base de données
+                    String requet_maj_statut = new String("UPDATE FOLLOWERS SET blocked = 1 WHERE \"#idU\" = " + id_personne.get(0) + " AND \"#idW\" = " + this.id_mur_admin + ";");
                     moteur_de_Requete.insertion_sql(requet_maj_statut);
                 }
             });

@@ -56,7 +56,6 @@ public class viewPrincipal extends ScrollPane {
     private HBox topBar = new HBox(); // box pour gérer la barre de recherche et les boutons de navigation
 
     private String TITRE_FENETRE = global.get_TITRE_FENETRE();
-    private double LARGEUR_FENETRE = global.get_LARGEUR_FENETRE();
     private int TAILLE_FIELD_TEXTE = 400;
 
     // Enonciation des variables pour le fond d'écran
@@ -478,7 +477,7 @@ public class viewPrincipal extends ScrollPane {
                 // Selectionne les amis de l'utilisateur
                 String requete_liste_follower = new String("SELECT prenom FROM USERS INNER JOIN FOLLOWERS ON USERS.idU = FOLLOWERS.\"#idU\" WHERE \"#idW\" =" + un_utilisateur_admin.getId_mur() + " AND blocked = 0;");
                 ArrayList<String> liste_follower = moteur_de_requete_mur.parcoursTableSQL(requete_liste_follower, "prenom");
-                Tableau_follower tableau_follower = new Tableau_follower(liste_follower);
+                Tableau_follower tableau_follower = new Tableau_follower(liste_follower, un_utilisateur_admin.getId_mur());
                 try {
                     tableau_follower.start(nouvelle_fenetre);
                 } catch (Exception error) {
@@ -496,13 +495,12 @@ public class viewPrincipal extends ScrollPane {
                 Stage nouvelle_fenetre_bloque = new Stage();
                 String requete_liste_follower = new String("SELECT prenom FROM USERS INNER JOIN FOLLOWERS ON USERS.idU = FOLLOWERS.\"#idU\" WHERE \"#idW\" =" + un_utilisateur_admin.getId_mur() + " AND blocked = 1;");
                 ArrayList<String> liste_bloque = moteur_de_requete_mur.parcoursTableSQL(requete_liste_follower, "prenom");
-                Tableau_bloque tableau_bloque = new Tableau_bloque(liste_bloque);
+                Tableau_bloque tableau_bloque = new Tableau_bloque(liste_bloque, un_utilisateur_admin.getId_mur());
                 try {
                     tableau_bloque.start(nouvelle_fenetre_bloque);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                
             }
         });
 
@@ -651,7 +649,6 @@ public class viewPrincipal extends ScrollPane {
           * Méthode qui gère la barre de recherche
           */
         barre_recherche.textProperty().addListener((observable, oldValue, recherche) -> {
-        // Créez une instance de votre classe de gestion de base de données
         
         // on extrait les murs de la BDD
         String requete = "SELECT nom FROM WALlS INNER JOIN USERS ON WALLS.\"#idU\" = USERS.idU WHERE nom LIKE '%" + recherche + "%';";
@@ -662,29 +659,32 @@ public class viewPrincipal extends ScrollPane {
         resultat_recherche.getItems().addAll(walls);
 
         resultat_recherche.getSelectionModel().selectedItemProperty().addListener((observation, ancienne_valeur, newValue) -> {
+            if (ancienne_valeur != newValue && newValue != null && walls.contains(newValue)) {
+                String requete_nouveau_mur = new String("SELECT login, nom, idW, idU FROM WALLS INNER JOIN USERS ON WALLS.\"#idU\" = USERS.idU WHERE nom = '" + newValue + "';");
+                ArrayList<String> liste_login_proprio = moteur_de_requete_mur.parcoursTableSQL(requete_nouveau_mur, "login");
+                ArrayList<String> liste_idW_proprio = moteur_de_requete_mur.parcoursTableSQL(requete_nouveau_mur, "idW");
+                ArrayList<String> liste_idU_proprio = moteur_de_requete_mur.parcoursTableSQL(requete_nouveau_mur, "idU");
+                ArrayList<String> liste_nom_proprio = moteur_de_requete_mur.parcoursTableSQL(requete_nouveau_mur, "nom");
+    
+    
+                if (!liste_login_proprio.isEmpty() && !liste_idW_proprio.isEmpty() && !liste_idU_proprio.isEmpty())
+                    proprietaire_mur = creation_User_Annexe(Integer.parseInt(liste_idW_proprio.get(0)), Integer.parseInt(liste_idU_proprio.get(0)), liste_login_proprio.get(0), liste_nom_proprio.get(0));
+                
+                String requete_statut = new String("SELECT blocked FROM FOLLOWERS WHERE \"#idU\" = " + un_utilisateur_admin.getId_user() + " AND \"#idW\" = " + proprietaire_mur.getId_mur() + ";");
+                ArrayList<String> liste_statut = moteur_de_requete_mur.parcoursTableSQL(requete_statut, "blocked");
+                try{
+                    gestionStatutUser(liste_statut); // bloque qui affiche le mur de l'utilisateur sélectionné ou non s'il est bloqué
+                }
+                catch (Exception error){
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Boite d'erreur");
+                    alert.setHeaderText(null);
+                    alert.setContentText(error.getMessage());
+                    alert.showAndWait();
+                }
 
-            String requete_nouveau_mur = new String("SELECT login, nom, idW, idU FROM WALLS INNER JOIN USERS ON WALLS.\"#idU\" = USERS.idU WHERE nom = '" + newValue + "';");
-            ArrayList<String> liste_login_proprio = moteur_de_requete_mur.parcoursTableSQL(requete_nouveau_mur, "login");
-            ArrayList<String> liste_idW_proprio = moteur_de_requete_mur.parcoursTableSQL(requete_nouveau_mur, "idW");
-            ArrayList<String> liste_idU_proprio = moteur_de_requete_mur.parcoursTableSQL(requete_nouveau_mur, "idU");
-            ArrayList<String> liste_nom_proprio = moteur_de_requete_mur.parcoursTableSQL(requete_nouveau_mur, "nom");
-
-
-            if (!liste_login_proprio.isEmpty() && !liste_idW_proprio.isEmpty() && !liste_idU_proprio.isEmpty())
-                proprietaire_mur = creation_User_Annexe(Integer.parseInt(liste_idW_proprio.get(0)), Integer.parseInt(liste_idU_proprio.get(0)), liste_login_proprio.get(0), liste_nom_proprio.get(0));
-            
-            String requete_statut = new String("SELECT blocked FROM FOLLOWERS WHERE \"#idU\" = " + un_utilisateur_admin.getId_user() + " AND \"#idW\" = " + proprietaire_mur.getId_mur() + ";");
-            ArrayList<String> liste_statut = moteur_de_requete_mur.parcoursTableSQL(requete_statut, "blocked");
-            try{
-                gestionStatutUser(liste_statut); // bloque qui affiche le mur de l'utilisateur sélectionné ou non s'il est bloqué
             }
-            catch (Exception error){
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Boite d'erreur");
-                alert.setHeaderText(null);
-                alert.setContentText(error.getMessage());
-                alert.showAndWait();
-            }
+
             
         });
     });
@@ -861,7 +861,6 @@ public class viewPrincipal extends ScrollPane {
             Path sourcePath = Paths.get(chemin);
             
             targetPath = Paths.get("projet_java/Code/ressources/Image/" + fichier_choisi.getName()); // chemin relatif dans le projet java
-            
 
              // Copie le fichier image sélectionné pour le retrouver plus tard
              try {
