@@ -26,7 +26,7 @@ Ce script bash execute le .jar du projet qui ne doit pas être déplacé de son 
 
 ## Bug reports
 
-- La barre de recherche peut entrainer un "softlock" de l'application si vous essayez d'accéder à un mur sur lequel vous êtes bloqué. La fenêtre d'erreur apparaitra autant de fois que vous avez entré de lettres pour trouver le mur en question.
+- La barre de recherche peut entrainer un "softlock" de l'application si vous essayé d'accéder à un mur sur lequel vous êtes bloqué. La fenêtre d'erreur apparaitra autant de fois que vous avez entré de lettres pour trouver le mur en question.
 
 - Lorsque vous postez des images ou des vidéos, veuillez à bien changer le titre des cer dernières pour éviter un bug de duplication.
 
