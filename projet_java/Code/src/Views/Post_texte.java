@@ -8,7 +8,10 @@ import java.util.HashMap;
 
 public class Post_texte {
 
-    protected Requete moteur_requete = new Requete();
+    /*
+     * 
+     * Cette classe gère tout ce qui a un rapport avec le post de type texte (mise en forme, insertion dans la BDD etc..)
+     */
     protected String auteur = new String();
     protected String texte = new String();
     protected int nbr_like;
@@ -16,7 +19,7 @@ public class Post_texte {
     protected Date date_post;
     protected DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT); // prepare la forme de la date jour/mois/année
 
-    protected Requete moteur_de_Requete = new Requete();
+    
 
     // Constructeur de base de l'objet Post_texte
     public Post_texte(){
@@ -84,7 +87,7 @@ public class Post_texte {
         return "Auteur : " + this.auteur + " texte : " + this.texte + " Nombre de like : " + this.nbr_like + " Commentaire : " + this.liste_commentaire + " Date : " + getDate();
     }
 
-    public void insertion_BDD_post(HashMap <String , Object> dico_info_post ){
+    public void insertion_BDD_post(HashMap <String , Object> dico_info_post , Requete moteur_de_Requete){
         // On insère les informations du post dans la base de données
 
         String requete_SQL_insertion = "INSERT INTO POSTS (texte, format, urlIMG, urlVID, duree, dateC, dateM, \"#idU\", \"#idW\", Type_posts) VALUES ('" 

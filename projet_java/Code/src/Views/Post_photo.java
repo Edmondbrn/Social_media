@@ -21,7 +21,6 @@ public class Post_photo extends Post_texte{ // classe qui hérite de Post_texte 
      */
     private String format_image = new String();
     private String image;
-    private Requete moteur_de_requete = new Requete();
     
     // constructeur de la classe
     public Post_photo(){
@@ -49,7 +48,7 @@ public class Post_photo extends Post_texte{ // classe qui hérite de Post_texte 
 
  
 
-    public ImageView TraitementImage(String texte , Label texte_du_post, String id_user, String id_post, String date_post, int nombre_like,  VBox vbox_post){
+    public ImageView TraitementImage(String texte , Label texte_du_post, String id_user, String id_post, String date_post, int nombre_like,  VBox vbox_post, Requete moteur_de_requete){
         /*
         * Méthode qui permet de traiter les images
         */

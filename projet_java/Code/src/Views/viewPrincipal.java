@@ -89,8 +89,8 @@ public class viewPrincipal extends ScrollPane {
     
     private Button bouton_poster = new Button("Poster");
 
-    private static User un_utilisateur_admin = new User();
-    private static User proprietaire_mur;
+    private static User un_utilisateur_admin = new User(); // crée l'utilisateur qui se connecte (admin du mur)
+    private static User proprietaire_mur; // crée l'utilisateur qui possède le mur si on en visite un autre
     
     private TextArea champ_titre = new TextArea(); // Définition de la zone d'édition du texte
     private Label texte_du_titre = new Label(); // futur variable qui va contenir le texte
@@ -98,8 +98,8 @@ public class viewPrincipal extends ScrollPane {
     
     
     private Requete moteur_de_requete_mur = new Requete(); // Crée un moteur de requête pour récupérer les posts de l'utilisateur
-    private Post_photo post_photo = new Post_photo();
-    private Post_video post_video = new Post_video();
+    private Post_photo post_photo = new Post_photo(); // definit l'objet qui va contenir les pots photo du mur
+    private Post_video post_video = new Post_video(); // definit l'objet qui va contenir les pots video du mur
 
 
     // Constructeur de la viewPrincipal
@@ -118,6 +118,10 @@ public class viewPrincipal extends ScrollPane {
         this.setContent(fond); // le scrollpane récupère le stackpane et affiche la scrollbar
         
         this.gestionPost(un_autre_Stage); // Gère les posts de la page
+    }
+
+    public Requete getRequete(){ // accesseur pour le moteur de requete SQL
+        return moteur_de_requete_mur;
     }
     
     public User creation_USER_admin(viewLogin viewconnexion){
@@ -156,11 +160,20 @@ public class viewPrincipal extends ScrollPane {
         return proprietaire_murbis;
     }
     
-    public void setUtilisateurAdmin(User un_utilisateur){
+    public void setUtilisateurAdmin(User user){
         /*
         * Méthode qui permet de définir l'utilisateur administrateur de la page pour des besoins futurs si nécessaires 
         */
-        un_utilisateur_admin = un_utilisateur;
+        un_utilisateur_admin = user;
+        
+    }
+
+    public void setUtilisateurNull(){
+        /*
+        * Méthode qui permet de définir les utilisateurs chargées de la page à null lors de la déconnexion
+        */
+        un_utilisateur_admin = null;
+        proprietaire_mur = null;
     }
 
     public void info_post_mur(User un_utilisateur){
@@ -227,13 +240,13 @@ public class viewPrincipal extends ScrollPane {
 
             else if (dico_post_utilisateur.get(texte).equals("Image")){
                 // si c'est une image on doit la traiter un peu
-                ImageView image = post_photo.TraitementImage(texte, texte_du_post, String.valueOf(id_user), id_post, date_post, nombre_like, vbox_post); // mise en forme de l'image
+                ImageView image = post_photo.TraitementImage(texte, texte_du_post, String.valueOf(id_user), id_post, date_post, nombre_like, vbox_post, moteur_de_requete_mur); // mise en forme de l'image
                 mise_en_page_post(image, false, false,false, nombre_like, String.valueOf(id_user), id_post, null, date_post); // affiche les posts avec les boutons like, commenter et supprimer
 
             } 
 
             else {
-                Media media = post_video.TraitementVideo(texte, texte_du_post, String.valueOf(id_user), id_post, date_post, nombre_like, vbox_post); /// mise en forme de la video
+                Media media = post_video.TraitementVideo(texte, texte_du_post, String.valueOf(id_user), id_post, date_post, nombre_like, vbox_post, moteur_de_requete_mur); /// mise en forme de la video
                 mise_en_page_post(null, false, true,false, nombre_like, String.valueOf(id_user), id_post, media, date_post); // affiche les posts avec les boutons like, commenter et supprimer
 
             }
@@ -380,7 +393,7 @@ public class viewPrincipal extends ScrollPane {
             bouton_like.setOnAction(new EventHandler<ActionEvent>() { // gère le bouton like
                 @Override
                 public void handle(ActionEvent event) { 
-                    un_utilisateur_admin.LikerPost(id_post, label_like, nbr_like2, false);
+                    un_utilisateur_admin.LikerPost(id_post, label_like, nbr_like2, false, moteur_de_requete_mur);
                 }
             });
 
@@ -389,7 +402,7 @@ public class viewPrincipal extends ScrollPane {
                 @Override
                 public void handle(ActionEvent event) {
                     try { // gère le cas où l'utilisateur n'a pas le droit de supprimer le post
-                        un_utilisateur_admin.SupprimerPost(id_post, vbox_post, vbox_mise_en_forme_post, id_user);
+                        un_utilisateur_admin.SupprimerPost(id_post, vbox_post, vbox_mise_en_forme_post, id_user , moteur_de_requete_mur);
                         vbox_post.getChildren().clear();
                         gestionImageProfil(un_utilisateur_admin);
                         info_post_mur(un_utilisateur_admin); 
@@ -438,7 +451,7 @@ public class viewPrincipal extends ScrollPane {
                 bouton_like_commentaire.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        un_utilisateur_admin.LikerPost(id_post, label_like_commentaire, nbr_like_com, true);
+                        un_utilisateur_admin.LikerPost(id_post, label_like_commentaire, nbr_like_com, true, moteur_de_requete_mur);
 
                     }
                 });
@@ -447,7 +460,7 @@ public class viewPrincipal extends ScrollPane {
                     @Override
                     public void handle(ActionEvent event) {
                         try{ // gère les droits de suppression d'un commentaire
-                            un_utilisateur_admin.SupprimerCommentaire(id_user, id_post, vbox_mise_en_forme_post, proprietaire_mur);
+                            un_utilisateur_admin.SupprimerCommentaire(id_user, id_post, vbox_mise_en_forme_post, proprietaire_mur, moteur_de_requete_mur);
                         }
                         catch (Exception error){
                             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -479,6 +492,7 @@ public class viewPrincipal extends ScrollPane {
                 ArrayList<String> liste_follower = moteur_de_requete_mur.parcoursTableSQL(requete_liste_follower, "prenom");
                 Tableau_follower tableau_follower = new Tableau_follower(liste_follower, un_utilisateur_admin.getId_mur());
                 try {
+                    tableau_follower.gestionUtilisateurBloque(moteur_de_requete_mur); //Exécute le code pour gérer lels actions sur les utilisateurs
                     tableau_follower.start(nouvelle_fenetre);
                 } catch (Exception error) {
                     error.printStackTrace();
@@ -486,6 +500,7 @@ public class viewPrincipal extends ScrollPane {
                 
             }
         });
+        
 
         // Gère le bouton d'affichage de la liste des bloqués
         menu_liste_bloque.setOnAction(new EventHandler<ActionEvent>() {
@@ -497,6 +512,7 @@ public class viewPrincipal extends ScrollPane {
                 ArrayList<String> liste_bloque = moteur_de_requete_mur.parcoursTableSQL(requete_liste_follower, "prenom");
                 Tableau_bloque tableau_bloque = new Tableau_bloque(liste_bloque, un_utilisateur_admin.getId_mur());
                 try {
+                    tableau_bloque.gestionUtilisateurBloque(moteur_de_requete_mur); //Exécute le code pour gérer lels actions sur les utilisateurs
                     tableau_bloque.start(nouvelle_fenetre_bloque);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -584,9 +600,9 @@ public class viewPrincipal extends ScrollPane {
             public void handle(ActionEvent event) {
                 try{
                     if (proprietaire_mur == null)
-                        un_utilisateur_admin.Follow( un_utilisateur_admin.getId_mur());
+                        un_utilisateur_admin.Follow( un_utilisateur_admin.getId_mur(), moteur_de_requete_mur);
                     else    
-                        un_utilisateur_admin.Follow( proprietaire_mur.getId_mur());
+                        un_utilisateur_admin.Follow( proprietaire_mur.getId_mur(), moteur_de_requete_mur);
 
                 }
                 catch (Exception error){
@@ -804,7 +820,7 @@ public class viewPrincipal extends ScrollPane {
         /*
         * Méthode qui insère un nouveau Post_texte dans la BDD
         */
-        un_utilisateur_admin.posterTexte(champs_du_texte, id_post_parent, commentaire, vbox_post, vbox_commentaire, btn_valider_post, proprietaire_mur);
+        un_utilisateur_admin.posterTexte(champs_du_texte, id_post_parent, commentaire, vbox_post, vbox_commentaire, btn_valider_post, proprietaire_mur, moteur_de_requete_mur);
 
     }
 
@@ -838,7 +854,7 @@ public class viewPrincipal extends ScrollPane {
          */
         
         post_photo.gestionRetraitLayoutTitre(texte_du_titre, vbox_post, champ_titre, bouton_valider_titre);
-        un_utilisateur_admin.postPhoto(un_autrestage, texte_du_titre);
+        un_utilisateur_admin.postPhoto(un_autrestage, texte_du_titre, moteur_de_requete_mur);
     }
     
 
@@ -937,7 +953,7 @@ public class viewPrincipal extends ScrollPane {
 
     private void insertionVideoBDD(Stage un_autrestage){
         post_video.gestionRetraitLayoutTitre(texte_du_titre, vbox_post, champ_titre, bouton_valider_titre);
-        un_utilisateur_admin.postVideo(un_autrestage, texte_du_titre);
+        un_utilisateur_admin.postVideo(un_autrestage, texte_du_titre, moteur_de_requete_mur);
     
     }
     

@@ -139,7 +139,7 @@ public class Vrai_appli extends Application {
                 
                 try { // inscription du nouvel utilisateur
                     User new_user = new User();
-                    new_user.gestionInfoInscription(primaryStage, sceneconnexion, nom, prenom, identifiant, mdp, mdp2, date_anniversaire, description_mur, chemin_photo);
+                    new_user.gestionInfoInscription(primaryStage, sceneconnexion, nom, prenom, identifiant, mdp, mdp2, date_anniversaire, description_mur, chemin_photo, viewprincipal.getRequete());
                     setscene_visible(primaryStage, sceneconnexion);
                 } 
                 catch (Exception error) {
@@ -158,6 +158,7 @@ public class Vrai_appli extends Application {
             public void handle(ActionEvent event) {
                 setscene_visible(primaryStage, sceneconnexion);
                 viewprincipal.vbox_post.getChildren().clear();
+                viewprincipal.setUtilisateurNull(); // suppression des utilsateurs
             }
         });
 

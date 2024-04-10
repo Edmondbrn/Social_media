@@ -42,7 +42,6 @@ public class Tableau_follower extends Application {
     private Scene scene = new Scene(vbox, 200, 200);
     private int id_mur_admin;
 
-    private Requete moteur_de_Requete = new Requete();
     public Tableau_follower(ArrayList<String> liste_personne, int id_mur) {
         liste_followers = liste_personne;   
         id_mur_admin = id_mur;  
@@ -72,9 +71,7 @@ public class Tableau_follower extends Application {
         // Créer un bouton pour fermer la fenêtre
         fermerBouton.setOnAction(e -> nouvelle_fenetre.close());
 
-        // Appeler la méthode pour gérer le blocage de l'utilisateur
-        this.gestionUtilisateurBloque();
-
+     
 
         // Ajouter la scène à la nouvelle fenêtre
         nouvelle_fenetre.setScene(scene);
@@ -90,7 +87,7 @@ public class Tableau_follower extends Application {
     
  
     
-    private void gestionUtilisateurBloque() {
+    public void gestionUtilisateurBloque(Requete moteur_de_Requete) {
         /*
          * Méthode qui crée et ajoute un élément de menu lors du clique droit sur un nom d'utilisateur et qui permet de bloquer l'utilisateru sélectionné
          * 

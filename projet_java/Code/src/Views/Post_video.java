@@ -75,13 +75,13 @@ public class Post_video extends Post_photo{
         vbox_post.getChildren().add(vbox_mise_en_forme_post);
     }
 
-    public Media TraitementVideo(String texte, Label texte_du_post, String id_user, String id_post, String date_post, int nombre_like, VBox vbox_post){
+    public Media TraitementVideo(String texte, Label texte_du_post, String id_user, String id_post, String date_post, int nombre_like, VBox vbox_post, Requete moteur_requete){
         /*
          * Methode qui se charge de créer la video et de la mettre en forme en pixels
          */
         // Cette requete permet de récupérer les url des vidéos en supposant que le titre de la vidéo (texte) est unique (ce qui est le cas dans notre cas)
         String requete_sql_bis = new String("SELECT * FROM POSTS where POSTS.texte = '" + texte + "' ;");
-        this.setVideo(moteur_de_Requete.parcoursTableSQL(requete_sql_bis, "urlVID").get(0));
+        this.setVideo(moteur_requete.parcoursTableSQL(requete_sql_bis, "urlVID").get(0));
         File file = new File(this.getVideo());
         Media media = new Media(file.toURI().toString());
         this.gestionTitreImage(texte_du_post, vbox_post); // Gère le titre de la vidéo

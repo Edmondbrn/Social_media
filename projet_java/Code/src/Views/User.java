@@ -26,8 +26,7 @@ public class User {
     /*
      * Classe qui gère les actions et les droits que peut avoir un utilisateur du réseau social
      */
-    
-    private Requete moteur_requete  = new Requete();
+ 
     private String nom = new String();
     private String prenom = new String();
     private String password = new String();
@@ -112,7 +111,7 @@ public class User {
     }
 
     
-    public void gestionInfoInscription(Stage primaryStage, Scene sceneconnexion, String nom, String prenom, String identifiant, String mdp, String mdp2, LocalDate date_anniversaire, String description_mur, AtomicReference<String> chemin_photo) throws VerifInfoInscription{
+    public void gestionInfoInscription(Stage primaryStage, Scene sceneconnexion, String nom, String prenom, String identifiant, String mdp, String mdp2, LocalDate date_anniversaire, String description_mur, AtomicReference<String> chemin_photo, Requete moteur_requete) throws VerifInfoInscription{
         /*
          * Méthode qui permet de gérer les informations d'inscription d'un utilisateur et de les insérer dans la BDD si besoin
          */
@@ -138,7 +137,7 @@ public class User {
         
     } 
 
-    public void Follow(int id_mur) throws VerifBloque{
+    public void Follow(int id_mur, Requete moteur_requete) throws VerifBloque{
         /*
          * Fonction qui permet de suivre le mur d'un utilisateur
          */
@@ -162,7 +161,7 @@ public class User {
          
     }
 
-    public void LikerPost(String id_post, Label label_like, AtomicInteger nbr_like2, boolean iscommentaire){
+    public void LikerPost(String id_post, Label label_like, AtomicInteger nbr_like2, boolean iscommentaire , Requete moteur_requete){
         /*
          * Fonction qui permet de liker un post ou de déliker un post
          */
@@ -192,7 +191,7 @@ public class User {
         }
     }
 
-    public  void SupprimerPost(String id_post, VBox vbox_post, VBox vbox_mise_en_forme_post, String id_user)  throws VerifDroitSuppression{
+    public  void SupprimerPost(String id_post, VBox vbox_post, VBox vbox_mise_en_forme_post, String id_user, Requete moteur_requete)  throws VerifDroitSuppression{
         /*
          * Fonction qui permet de supprimer un post
          */
@@ -224,7 +223,7 @@ public class User {
         }
     }
 
-    public void SupprimerCommentaire(String id_user, String id_post, VBox vbox_post, User proprietaire_mur) throws VerifDroitSuppressionCommentaire{
+    public void SupprimerCommentaire(String id_user, String id_post, VBox vbox_post, User proprietaire_mur, Requete moteur_requete) throws VerifDroitSuppressionCommentaire{
         /*
          * Fonction qui permet de supprimer un commentaire
          */
@@ -256,7 +255,7 @@ public class User {
         }
     }
     
-    public void posterTexte(TextArea champs_du_texte, String id_post_parent, boolean commentaire, VBox vbox_post, VBox vbox_commentaire, Button btn_valider_post, User proprietaire_mur){
+    public void posterTexte(TextArea champs_du_texte, String id_post_parent, boolean commentaire, VBox vbox_post, VBox vbox_commentaire, Button btn_valider_post, User proprietaire_mur, Requete moteur_requete){
         /*
          * Méthode qui permet à un user de créer un post_texte et de l'insérer dans la base de données
          */
@@ -296,7 +295,7 @@ public class User {
          info_nouveau_post.put("#idW", liste_id_wall.get(0));
          info_nouveau_post.put("Type_posts", "Texte");
          
-         nouveau_post.insertion_BDD_post(info_nouveau_post); // insère le post dans la base de données
+         nouveau_post.insertion_BDD_post(info_nouveau_post, moteur_requete); // insère le post dans la base de données
          String requete_idpost = new String("SELECT idP FROM POSTS WHERE \"#idU\" =" + this.getId_user() + " AND dateC ='" + date_post + "' AND texte = '" +  info_nouveau_post.get("texte") + "' ;");
          ArrayList<String> liste_id_post = moteur_requete.parcoursTableSQL(requete_idpost, "idP");
 
@@ -331,7 +330,7 @@ public class User {
 
     }
 
-     public void postPhoto(Stage un_autrestage, Label texte_du_titre){
+     public void postPhoto(Stage un_autrestage, Label texte_du_titre, Requete moteur_requete){
         /*
          * Méthode qui crée un post photo et l'insère dans la base de données
          */
@@ -353,12 +352,12 @@ public class User {
         info_nouveau_post_photo.put("#idW", this.getId_mur());
         info_nouveau_post_photo.put("Type_posts", "Image");
         
-        nouveau_post_image.insertion_BDD_post(info_nouveau_post_photo); // insère le post dans la base de données
+        nouveau_post_image.insertion_BDD_post(info_nouveau_post_photo, moteur_requete); // insère le post dans la base de données
 
     }
 
 
-    public void postVideo(Stage un_autrestage, Label texte_du_titre){
+    public void postVideo(Stage un_autrestage, Label texte_du_titre, Requete moteur_requete){
         /*
          * Méthode qui creé un post vidéo et l'insère dans la base de données
          * 
@@ -383,7 +382,7 @@ public class User {
         info_nouveau_post_video.put("#idW", this.getId_mur());
         info_nouveau_post_video.put("Type_posts", "Video");
 
-        nouveau_post.insertion_BDD_post(info_nouveau_post_video); // insère le post dans la base de données
+        nouveau_post.insertion_BDD_post(info_nouveau_post_video, moteur_requete); // insère le post dans la base de données
     
         
     }

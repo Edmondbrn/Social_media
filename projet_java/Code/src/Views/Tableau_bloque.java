@@ -45,12 +45,12 @@ public class Tableau_bloque extends Application {
 
    // Créer une nouvelle scène
    Scene scene = new Scene(vbox, 200, 200);
-   Requete moteur_de_Requete = new Requete();
+   
    int id_mur;
 
    public Tableau_bloque(ArrayList<String> liste_personne, int id_mur_admin) {
-       this.liste_personne = liste_personne;
-       this.id_mur = id_mur_admin;
+       this.liste_personne = liste_personne; // followers du mur
+       this.id_mur = id_mur_admin; // id du mur que suivent les followers
        
    }
 
@@ -78,7 +78,7 @@ public class Tableau_bloque extends Application {
        fermerBouton.setOnAction(e -> nouvelle_fenetre.close());
 
        // Appeler la méthode pour gérer le blocage de l'utilisateur
-       this.gestionUtilisateurBloque();
+      
 
 
        // Ajouter la scène à la nouvelle fenêtre
@@ -94,7 +94,7 @@ public class Tableau_bloque extends Application {
    }
 
    
-   private void gestionUtilisateurBloque() {
+   public void gestionUtilisateurBloque(Requete moteur_de_Requete) {
        /*
         * Méthode qui crée et ajoute un élément de menu lors du clique droit sur un nom d'utilisateur
         * 
